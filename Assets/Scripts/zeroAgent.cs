@@ -42,7 +42,7 @@ public class zeroAgent : Agent
         rb = GetComponent<Rigidbody>();
     }
 
-    public void InitializeAgent(int agentNum, float moveSpeed = 0.2f, float turnSpeed = 150f, float maxSpeed = 1.0f)
+    public void InitializeAgent(int agentNum, float moveSpeed = 0.3f, float turnSpeed = 50f, float maxSpeed = 1.0f)
     {
         this.agentNum = agentNum;
         this.moveSpeed = moveSpeed;
@@ -96,7 +96,7 @@ public class zeroAgent : Agent
 
     private void SetAgentReward()
     {
-        if (goalDistance < 2.5f)
+        if (goalDistance < 2.0f)
         {
             AddReward(goalReward);
             SetPosition(startPosition, goalPosition);
@@ -108,11 +108,14 @@ public class zeroAgent : Agent
 
         float currentGoalDistance = Vector3.Distance(transform.position, goalPosition);
         currentAngle = Vector3.Angle(transform.forward, goalPosition - transform.position);
-
-        if (currentAngle <= 45f && currentGoalDistance < goalDistance)
+        float threshholdAngle = 15 + (35 * (currentGoalDistance / (Vector3.Distance(goalPosition, startPosition))));
+        if (currentGoalDistance < goalDistance)
         {
-            AddReward(arrivalReward);
-            reward += arrivalReward;
+            if(currentAngle <= threshholdAngle)
+            {
+                AddReward(arrivalReward);
+                reward += arrivalReward;
+            }
             goalDistance = currentGoalDistance;
         }
         else
