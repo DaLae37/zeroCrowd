@@ -8,4 +8,4 @@ ML-Agents Release 20
 # Project
 [FindingYonghee](https://youtu.be/IbnIGOHuBFU?si=1Ml9hwgt_yT7VyK0)의 파생 프로젝트
 
-[zeroCity](https://github.com/W298/zeroCity)를 이용하였음
+[zeroCity](https://github.com/W298/zeroCity)
