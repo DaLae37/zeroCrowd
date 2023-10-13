@@ -14,6 +14,7 @@ public class zeroAgent : Agent
     public float arrivalReward = 0.00095f;
     public float arrivalPenalty = 0.00025f;
     public float groundPenalty = 0.0005f;
+    public float collideAgentPenalty = 0.01f;
     #endregion
 
     #region Values
@@ -24,6 +25,7 @@ public class zeroAgent : Agent
     [SerializeField] private float reward;
     private bool isInitalized = false;
     private bool isOnGround = false;
+    private bool isTraining = true;
 
     [Header("RigidValue")]
     [SerializeField] private float moveSpeed;
@@ -36,20 +38,30 @@ public class zeroAgent : Agent
     private int stillCounter = 0;
     #endregion
 
-    // Start is called before the first frame update
-    void Start()
+    private void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
 
-    public void InitializeAgent(int agentNum, float moveSpeed = 0.3f, float turnSpeed = 50f, float maxSpeed = 1.0f)
+    // Start is called before the first frame update
+    void Start()
     {
-        this.agentNum = agentNum;
-        this.moveSpeed = moveSpeed;
-        this.turnSpeed = turnSpeed;
-        this.maxSpeed = maxSpeed;
-        reward = 0;
-        isInitalized = true;
+
+    }
+
+    public void InitializeAgent(int agentNum, bool isTraining, float moveSpeed = 0.3f, float turnSpeed = 50f, float maxSpeed = 1.0f)
+    {
+        if (!isInitalized)
+        {
+            this.agentNum = agentNum;
+            this.moveSpeed = moveSpeed;
+            this.turnSpeed = turnSpeed;
+            this.maxSpeed = maxSpeed;
+            this.isTraining = isTraining;
+
+            reward = 0;
+            isInitalized = true;
+        }
     }
 
     public void SetPosition(Vector3 starPosition, Vector3 goalPosition)
@@ -63,12 +75,11 @@ public class zeroAgent : Agent
 
     public override void OnEpisodeBegin()
     {
-        if (!isInitalized)
+        if(!isInitalized)
         {
-            gameObject.SetActive(false);
+            reward = 0f;
+            rb.velocity = Vector3.zero;
         }
-        reward = 0f;
-        rb.velocity = Vector3.zero;
     }
 
     public override void CollectObservations(VectorSensor sensor)
@@ -89,8 +100,12 @@ public class zeroAgent : Agent
         SetAgentReward();
         if(reward < -50f)
         {
-            EndEpisode();
-            SetPosition(startPosition, goalPosition);
+            if (isTraining)
+            {
+                GameObject.Find("AgentGenerator").GetComponent<AgentGenerator>().EndSignal(this, agentNum);
+                isInitalized = false;
+                EndEpisode();
+            }
         }
     }
 
@@ -99,8 +114,12 @@ public class zeroAgent : Agent
         if (goalDistance < 2.0f)
         {
             AddReward(goalReward);
-            SetPosition(startPosition, goalPosition);
-            EndEpisode();
+            if (isTraining)
+            {
+                GameObject.Find("AgentGenerator").GetComponent<AgentGenerator>().EndSignal(this, agentNum);
+                isInitalized = false;
+                EndEpisode();
+            }
         }
 
         AddReward(-livingPenalty);
@@ -162,7 +181,7 @@ public class zeroAgent : Agent
         Vector3 moveDir = Vector3.zero;
         Vector3 rotateDir = Vector3.zero;
 
-        if (stillCounter >= 20)
+        if (stillCounter >= 10)
         {
             moveDir = unstuckAction();
             stillCounter = 0;
@@ -201,6 +220,15 @@ public class zeroAgent : Agent
         if (rb.velocity.magnitude > maxSpeed)
         {
             rb.velocity = rb.velocity.normalized * maxSpeed;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Agent")
+        {
+            AddReward(-collideAgentPenalty);
+            reward -= collideAgentPenalty;
         }
     }
 }

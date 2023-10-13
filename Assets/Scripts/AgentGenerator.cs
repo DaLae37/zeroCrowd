@@ -5,35 +5,60 @@ using UnityEngine;
 public class AgentGenerator : MonoBehaviour
 {
     public zeroAgent agent;
-    public zeroAgent[] agents;
+    public Transform agents;
 
+    public int trainingAreas = 1;
+    public bool isTraining = true;
+
+    public int maxAgents = 3;
     public float agentGenerateTime = 1;
-    public float agentGenerateTimer;
-    public int maxAgents = 1;
-    public int currentAgents;
-
+    public float []agentGenerateTimer;
+    public int []currentAgents;
     public Transform[] zones;
     // Start is called before the first frame update
     void Start()
     {
-        agents = new zeroAgent[maxAgents];
-        currentAgents = 0;
-        agentGenerateTimer = 0;
+        agentGenerateTimer = new float[trainingAreas];
+        currentAgents = new int[trainingAreas];
+        zones = new Transform[trainingAreas];
+        for (int i = 0; i < trainingAreas; i++)
+        {
+            zones[i] = GameObject.Find("Road" + (i+1).ToString()).transform;
+            currentAgents[i] = 0;
+            agentGenerateTimer[i] = 0;
+        }
+
+        InitAgents();
+    }
+
+    void InitAgents()
+    {
+        for (int i = 0; i < trainingAreas; i++)
+        {
+            int current = currentAgents[i];
+            for (int j = 0; j < maxAgents - current; j++)
+            {
+                zeroAgent tmp = Instantiate(agent);
+                tmp.transform.SetParent(agents);
+                tmp.InitializeAgent(i, isTraining);
+
+                int r = Random.Range(1, 3);
+                tmp.SetPosition(zones[i].Find("Goal" + r.ToString()).position, zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
+
+                currentAgents[i]++;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        agentGenerateTimer += Time.deltaTime;
-        if(currentAgents < maxAgents && agentGenerateTimer > agentGenerateTime)
-        {
-            zeroAgent tmp = Instantiate(agent);
-            agents[currentAgents] = tmp;
-            tmp.InitializeAgent(currentAgents);
-            tmp.SetPosition(zones[0].position, zones[1].position);
 
-            currentAgents++;
-            agentGenerateTimer = 0;
-        }
+    }
+
+    public void EndSignal(zeroAgent g, int i)
+    {
+        int r = Random.Range(1, 3);
+        g.SetPosition(zones[i].Find("Goal" + r.ToString()).position, zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
     }
 }

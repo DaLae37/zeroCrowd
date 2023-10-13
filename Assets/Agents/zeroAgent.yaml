@@ -3,8 +3,8 @@ behaviors:
   zeroAgent:
     trainer_type: ppo
     hyperparameters:
-      batch_size: 1024
-      buffer_size: 10240
+      batch_size: 4096
+      buffer_size: 40960
       learning_rate: 0.0003
       beta: 0.005
       epsilon: 0.2
@@ -31,10 +31,10 @@ behaviors:
           goal_conditioning_type: hyper
     init_path: null
     keep_checkpoints: 5
-    checkpoint_interval: 500000
+    checkpoint_interval: 1000000
     max_steps: 200000000
     time_horizon: 64
-    summary_freq: 10000
+    summary_freq: 500000
     threaded: false
     self_play: null
     behavioral_cloning: null
