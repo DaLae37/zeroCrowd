@@ -40,10 +40,11 @@ public class AgentGenerator : MonoBehaviour
             {
                 zeroAgent tmp = Instantiate(agent);
                 tmp.transform.SetParent(agents);
-                tmp.InitializeAgent(i, isTraining);
+                tmp.InitializeAgent(i, isTraining, Random.Range(0.25f, 0.4f), Random.Range(0.9f, 1.3f));
 
                 int r = Random.Range(1, 3);
-                tmp.SetPosition(zones[i].Find("Goal" + r.ToString()).position, zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
+                tmp.SetPosition(zones[i].Find("Goal" + r.ToString()).position,
+                    zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
 
                 currentAgents[i]++;
             }
@@ -59,6 +60,7 @@ public class AgentGenerator : MonoBehaviour
     public void EndSignal(zeroAgent g, int i)
     {
         int r = Random.Range(1, 3);
-        g.SetPosition(zones[i].Find("Goal" + r.ToString()).position, zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
+        g.SetPosition(zones[i].Find("Goal" + r.ToString()).position,
+            zones[i].Find("Goal" + ((r == 1) ? 2 : 1).ToString()).position);
     }
 }

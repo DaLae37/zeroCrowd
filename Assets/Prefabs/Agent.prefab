@@ -192,7 +192,7 @@ MonoBehaviour:
     VectorActionDescriptions: []
     VectorActionSpaceType: 0
     hasUpgradedBrainParametersWithActionSpec: 1
-  m_Model: {fileID: 0}
+  m_Model: {fileID: 5022602860645237092, guid: 5e37aa23a1a521a4aa3d63dd5bec7b16, type: 3}
   m_InferenceDevice: 0
   m_BehaviorType: 0
   m_BehaviorName: zeroAgent
@@ -236,7 +236,7 @@ MonoBehaviour:
   m_RaysPerDirection: 15
   m_MaxRayDegrees: 180
   m_SphereCastRadius: 0
-  m_RayLength: 15
+  m_RayLength: 20
   m_RayLayerMask:
     serializedVersion: 2
     m_Bits: 4294967291

@@ -49,7 +49,7 @@ public class zeroAgent : Agent
 
     }
 
-    public void InitializeAgent(int agentNum, bool isTraining, float moveSpeed = 0.3f, float turnSpeed = 50f, float maxSpeed = 1.0f)
+    public void InitializeAgent(int agentNum, bool isTraining, float moveSpeed = 0.3f, float maxSpeed = 1.0f, float turnSpeed = 50f)
     {
         if (!isInitalized)
         {
@@ -119,6 +119,10 @@ public class zeroAgent : Agent
                 GameObject.Find("AgentGenerator").GetComponent<AgentGenerator>().EndSignal(this, agentNum);
                 isInitalized = false;
                 EndEpisode();
+            }
+            else
+            {
+                GameObject.Find("AgentScheduler").GetComponent<AgentScheduler>().NextRoad(this);
             }
         }
 
