@@ -13,6 +13,7 @@ public class zeroAgent : Agent
     public float goalReward = 1f;
     public float arrivalReward = 0.00095f;
     public float arrivalPenalty = 0.00025f;
+    public float ViewpointPenalty = 0.0001f;
     public float groundPenalty = 0.0005f;
     public float collideAgentPenalty = 0.01f;
     #endregion
@@ -122,7 +123,7 @@ public class zeroAgent : Agent
             }
             else
             {
-                GameObject.Find("AgentScheduler").GetComponent<AgentScheduler>().NextRoad(this);
+                GameObject.Find("AgentScheduler").GetComponent<AgentScheduler>().NextRoad(this, goalPosition);
             }
         }
 
@@ -132,9 +133,19 @@ public class zeroAgent : Agent
         float currentGoalDistance = Vector3.Distance(transform.position, goalPosition);
         currentAngle = Vector3.Angle(transform.forward, goalPosition - transform.position);
         float threshholdAngle = 15 + (35 * (currentGoalDistance / (Vector3.Distance(goalPosition, startPosition))));
+        bool correctView = false;
+        if (currentAngle <= threshholdAngle)
+        {
+            correctView = true;
+        }
+        else
+        {
+            AddReward(-ViewpointPenalty);
+            reward -= ViewpointPenalty;
+        }
         if (currentGoalDistance < goalDistance)
         {
-            if(currentAngle <= threshholdAngle)
+            if(correctView)
             {
                 AddReward(arrivalReward);
                 reward += arrivalReward;

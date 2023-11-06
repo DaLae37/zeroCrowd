@@ -4,9 +4,8 @@ using UnityEngine;
 
 public class AgentScheduler : MonoBehaviour
 {
-    public Transform[] zones;
     int currnetRoad = 1;
-    int endRoad = 4;
+    int endRoad = 10;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,14 +18,31 @@ public class AgentScheduler : MonoBehaviour
         
     }
 
-    public void NextRoad(zeroAgent agent)
+    public void NextRoad(zeroAgent agent, Vector3 goal)
     {
         if(++currnetRoad < endRoad)
         {
             agent.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            GameObject road = GameObject.Find("Road" + currnetRoad.ToString());
-            agent.SetPosition(road.transform.Find("Goal1").transform.position, 
-                road.transform.Find("Goal2").transform.position);
+            Collider[] collides = Physics.OverlapSphere(goal, 1);
+            bool isSetRoad = false;
+            while (!isSetRoad)
+            {
+                for (int i = 0; i < collides.Length; i++)
+                {
+                    if (collides[i].tag == "Goal" && collides[i].transform.position != goal)
+                    {
+                        int dice = Random.Range(1, 7);
+                        if(dice < 3)
+                        {
+                            Transform road = collides[i].transform.parent;
+                            agent.SetPosition(agent.transform.position,
+                                road.Find(((collides[i].name == "Goal1") ? "Goal2" : "Goal1")).transform.position);
+                            isSetRoad = true;
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

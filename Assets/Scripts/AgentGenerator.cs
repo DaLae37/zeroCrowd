@@ -7,8 +7,8 @@ public class AgentGenerator : MonoBehaviour
     public zeroAgent agent;
     public Transform agents;
 
-    public int trainingAreas = 1;
-    public bool isTraining = true;
+    public int roadNum = 1;
+    public bool isTraining;
 
     public int maxAgents = 3;
     public float agentGenerateTime = 1;
@@ -18,10 +18,10 @@ public class AgentGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        agentGenerateTimer = new float[trainingAreas];
-        currentAgents = new int[trainingAreas];
-        zones = new Transform[trainingAreas];
-        for (int i = 0; i < trainingAreas; i++)
+        agentGenerateTimer = new float[roadNum];
+        currentAgents = new int[roadNum];
+        zones = new Transform[roadNum];
+        for (int i = 0; i < roadNum; i++)
         {
             zones[i] = GameObject.Find("Road" + (i+1).ToString()).transform;
             currentAgents[i] = 0;
@@ -33,7 +33,7 @@ public class AgentGenerator : MonoBehaviour
 
     void InitAgents()
     {
-        for (int i = 0; i < trainingAreas; i++)
+        for (int i = 0; i < roadNum; i++)
         {
             int current = currentAgents[i];
             for (int j = 0; j < maxAgents - current; j++)
